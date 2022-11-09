@@ -1,0 +1,184 @@
+﻿@model FS.Models.ViewModels.DetailsVM
+
+<div class="">
+    <div class="container backgroundWhite pt-4">
+            <div class="card" style="border:1px solid #000000; ">
+                <div class="card-header bg-dark text-light ml-0 d-flex container" style="border-radius: 0px;">
+                    <div class="col-md-6">
+                        <h1 class="text-white">@Model.Movie.Title</h1>
+                    </div>
+                    <div class="col-md-4">
+                        @if (Model.RatingList.Count() != 0)
+                        {
+                            <span style="font-size: 2rem; color: gold">★</span><span style="        font-size: 2rem;" class="">@Model.RatingList.Average(u => u.UserRating) </span>
+                        }
+                        else
+                        {
+                            <span style="font-size: 2rem; color: gold">★</span><span style="font-size: 2rem;" class="">- </span>
+                        }
+                    </div>
+                    @if (User.IsInRole(WC.AdminRole))
+                    {
+                        <div class="m-xl-2">
+                            <a asp-controller="Movie" asp-route-Id="@Model.Movie.Id" asp-action="Upsert" class="btn btn-primary mx-2">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <a asp-controller="Movie" asp-route-Id="@Model.Movie.Id" asp-action="Delete" class="btn btn-danger mx-2">
+                                <i class="fas fa-trash-alt"></i>
+                            </a>
+                        </div>
+                    }
+                </div>
+                <div class="card-body">
+                    <div class="container rounded p-2">
+                        <div class="row">
+                            <div class="col-12 col-lg-4 p-1 text-center">
+                                <img src="@WC.ImagePath@Model.Movie.Img" width="100%" class="rounded" />
+                            </div>
+                            <div class="col-12 col-lg-8">
+                                <table class="m-4">
+                                    <tr>
+                                        <td class=" col-4"><h4>Слоган:</h4></td>
+                                        <td><span>"@Model.Movie.Tagline"</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" col-4"><h4>Дата Релиза:</h4></td>
+                                        <td><span>@Model.Movie.Release.Day @Model.Movie.Release.Month @Model.Movie.Release.Year</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" col-4"><h4>Страна:</h4></td>
+                                        <td>
+                                            @foreach (var obj in Model.Movie.Countries)
+                                            {
+                                                if (obj == Model.Movie.Countries.Last())
+                                                {
+                                                    <span>@obj.Name </span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@obj.Name, </span>
+                                                }
+                                            }
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" col-4"><h4>Режисcер:</h4></td>
+                                        <td>
+                                            @foreach (var obj in Model.DirectorList)
+                                            {
+                                                if (obj == Model.DirectorList.Last())
+                                                {
+                                                    <span>@obj.Human </span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@obj.Human, </span>
+                                                }
+                                            }
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" col-4"><h4>Жанр:</h4></td>
+                                        <td>
+                                            @foreach (var obj in Model.Movie.Genres)
+                                            {
+                                                if (obj == Model.Movie.Genres.Last())
+                                                {
+                                                    <span>@obj.Name</span>
+                                                }
+                                                else
+                                                {
+                                                    <span>@obj.Name, </span>
+                                                }
+                                            }
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" col-4"><h4>Длительность:</h4></td>
+                                        <td><span>@Model.Movie.Duration Мин.</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" col-4"><h4>Входит в подборки:</h4></td>
+                                        <td>
+                                            @foreach (var obj in Model.Movie.Compilations)
+                                            {
+                                                <div>@obj.Name</div>
+                                            }
+
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class=" col-4"><h4>Актеры:</h4></td>
+                                        <td>
+                                            <div>
+                                                @foreach (var obj in Model.ActorList)
+                                                {
+                                                    <span>@obj.Human,</span>
+                                                }
+                                                и т.д.
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <h3 class="text-dark"> Описание фильма "@Model.Movie.Title":</h3>
+                        <div class="col-12 ">
+                            @Html.Raw(Model.Movie.Description)
+                        </div>
+                        <h3 class="text-dark"> Отзывы "@Model.Movie.Title":</h3>
+                        @foreach (var obj in Model.RatingList)
+                        {
+                            <div class="border m-1">
+                                <div class="card-header bg-dark text-light ml-0 d-flex container">
+                                    <span class="col-8"><strong>@obj.UserName</strong></span>
+                                    @if (User.Identity.Name == obj.UserName || User.IsInRole(WC.AdminRole))
+                                    {
+                                    <form class="col-2" asp-action="Delete" method="post">
+                                        <input name="userName" value="@obj.UserName" hidden/>
+                                        <input name="movieId" value="@Model.Movie.Id" hidden/>
+                                        <button type="submit" class="btn btn-danger"><i class="fas fa-trash-alt"></i></button>
+                                    </form>
+                                    }
+                                    else
+                                    {
+                                        <div class="col-2"></div>
+                                    }
+                                    <span style="color: gold">★</span><span class="col-2">@obj.UserRating </span>
+                                </div>
+                                <div class="m-3">@obj.Comment</div>
+                            </div>
+                        }
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div>
+                                <form method="post" asp-action="Details">
+                                    <input name="id" value="@Model.Movie.Id" hidden />
+                                    <div name="rating" class="rating-area">
+                                        <input type="radio" id="star-5" name="rating" value="5">
+                                        <label for="star-5" title="Оценка «5»"></label>
+                                        <input type="radio" id="star-4" name="rating" value="4">
+                                        <label for="star-4" title="Оценка «4»"></label>
+                                        <input type="radio" id="star-3" name="rating" value="3">
+                                        <label for="star-3" title="Оценка «3»"></label>
+                                        <input type="radio" id="star-2" name="rating" value="2">
+                                        <label for="star-2" title="Оценка «2»"></label>
+                                        <input type="radio" id="star-1" name="rating" value="1">
+                                        <label for="star-1" title="Оценка «1»"></label>
+                                    </div>
+                                    <textarea class="col-12" name="comment" value=""></textarea>
+                                    <button type="submit" class="btn btn-success">Оставить отзыв</button>
+                                </form>
+                            </div>
+                        }
+                    </div>
+                </div>
+                <div>
+
+                </div>
+            </div>
+        </div>
+</div>

@@ -1,0 +1,372 @@
+﻿@model FS.Models.ViewModels.MovieVM
+
+@{
+    var title = "Добавить Фильм";
+}
+
+<form method="post" enctype="multipart/form-data">
+    @if (Model.Movie.Id != 0)
+    {
+        title = "Изменить Фильм";
+        <input asp-for="Movie.Id" hidden />
+    }
+    <div class="border p-3">
+        <div class="form-group row">
+            <h2 class="text-info pl-3">@title</h2>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Movie.Title"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Movie.Title" class="form-control" />
+                        <span asp-validation-for="Movie.Title" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Movie.Tagline"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Movie.Tagline" class="form-control" />
+                        <span asp-validation-for="Movie.Tagline" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Movie.Release"></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="date" asp-for="Movie.Release" class="form-control" />
+                        <span asp-validation-for="Movie.Release" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Movie.Duration"></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="number" asp-for="Movie.Duration" class="form-control" />
+                        <span asp-validation-for="Movie.Duration" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Movie.Description"></label>
+                    </div>
+                    <div class="col-8">
+                        <textarea asp-for="Movie.Description" class="form-control tiny"></textarea>
+                        <span asp-validation-for="Movie.Description" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Movie.Img"></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="file" name="files" id="uploadBox" multiple asp-for="Movie.Img" class="form-control" />
+                        <span asp-validation-for="Movie.Img" class="text-danger"></span>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label>Жанры</label>
+                    </div>
+                    <div class="col-8">
+                        <select name="IdGenre" id="lstFruits" asp-items="@Model.GenreSelectList" multiple="multiple" class="js-example-placeholder-multiple js-states form-control">
+                            @*@foreach (var obj in Model.GenreSelectList)
+                            {
+                                <label><input type="checkbox" name="IdGenre" value="@obj.Value" checked>@obj.Text </label>
+                            }*@
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label>Страны</label>
+                    </div>
+                    <div class="col-8">
+                        <select name="IdCountry" asp-items="@Model.CountrySelectList" multiple="multiple" class="js-example-placeholder-multiple js-states form-control">
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label>Подборки</label>
+                    </div>
+                    <div class="col-8">
+                        <select  name="IdCompilation" asp-items="@Model.CompilationSelectList" multiple="multiple" class="js-example-placeholder-multiple js-states form-control">
+                        </select>
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+
+                        <div class="col">
+                            @if (Model.Movie.Id != 0)
+                            {
+                                <input type="submit" class="btn btn-info w-100" value="Обновить" />
+                            }
+                            else
+                            {
+                                <input type="submit" onclick="return validateInput()" class="btn btn-primary w-100" value="Создать" />
+                            }
+
+                        </div>
+                        <div class="col">
+                            <a asp-action="Index" class="btn btn-success w-100"><i class="fas fa-sign-out-alt"></i> Вернуться</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            @if (Model.Movie.Id != 0)
+            {
+                <div class="col-4">
+                    @* Keep this empty *@
+
+                    <img src="@WC.ImagePath@Model.Movie.Img" width="100%" style="border-radius:5px; border:1px; solid:#bbb" />
+
+                    <div class="m-3"></div>
+                    <div class="">
+                        <!-- Button trigger modal -->
+                        <button type="button" class="btn btn-success col-xl-12" data-bs-toggle="modal" data-bs-target="#exampleModal">
+                            Добавить Актера
+                        </button>
+                        <table class="table table-bordered table-striped" style="width:100%">
+                            <tbody>
+                                @foreach (var obj in @Model.MovieHumanList)
+                                {
+                                    <tr>
+                                        <td width="50%">@obj.Human</td>
+                                        <td width="30%">@obj.Role</td>
+                                        <td class="text-center">
+                                            <div class="w-10 btn-group" role="group">
+                                                <button type="button" class="btn btn-success col-xl" data-bs-toggle="modal" data-HumanId="@obj.idHuman" data-RoleId="@obj.idRole" data-bs-target="#exampleModal">
+                                                    <i class="fas fa-edit"></i>
+                                                </button>
+                                                <button type="button" data-bs-toggle="modal" data-HumanId="@obj.idHuman" data-RoleId="@obj.idRole" data-bs-target="#deleteActor" class="btn btn-danger mx-2">
+                                                    <i class="fas fa-trash-alt"></i>
+                                                </button>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</form>
+
+@if (Model.Movie.Id != 0)
+{
+    <!-- Add/Edit -->
+    <div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Добавить Актера</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Закрыть"></button>
+                </div>
+                <div class="modal-body">
+
+                    <form method="post" id="MoviePeople">
+                        <input hidden />
+                        <input name="IdMovie" value="@Model.Movie.Id" hidden />
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label asp-for="MovieHuman.HumanId"></label>
+                            </div>
+                            <div class="col-8">
+                                <select name="IdHuman" asp-items="@Model.HumanSelectList" class="form-control">
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label asp-for="MovieHuman.RoleId"></label>
+                            </div>
+                            <div class="col-8">
+                                <select name="IdRole" asp-items="@Model.RoleSelectList" class="form-control">
+                                </select>
+                            </div>
+
+                        </div>
+                        <input name="IdHumanD" hidden />
+                        <input name="IdRoleD" hidden />
+                    </form>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button"  class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button name="MoviePeopleBtn"form="MoviePeople" asp-controller="MoviePeople" asp-action="Upsert" type="submit" class="btn btn-primary">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    @* Delete *@
+    <div class="modal fade" id="deleteActor" tabindex="-1" aria-labelledby="deleteActorLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Удаление Актера</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form method="post" id="MoviePeopleD">
+                        <input hidden />
+                        <input name="IdMovie" value="@Model.Movie.Id" hidden />
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label asp-for="MovieHuman.HumanId"></label>
+                            </div>
+                            <div class="col-8">
+                                <select name="IdHuman" id="toSelect" asp-items="@Model.HumanSelectList" class="form-control ">
+                                </select>
+                            </div>
+
+                        </div>
+                        <div class="form-group row">
+                            <div class="col-4">
+                                <label asp-for="MovieHuman.RoleId"></label>
+                            </div>
+                            <div class="col-8">
+                                <select name="IdRole" id="toSelect2" asp-items="@Model.RoleSelectList"  class="form-control ">
+                                </select>
+                            </div>
+
+                        </div>
+
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Закрыть</button>
+                    <button name="MoviePeopleBtn" form="MoviePeopleD" type="submit" asp-controller="MoviePeople" asp-action="Delete" class="btn btn-danger">Удалить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+    @section Scripts{
+        @{
+            <partial name="_ValidationScriptsPartial" />
+        }
+        <script>
+            var useDarkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+
+
+            tinymce.init({
+                selector: 'textarea.tiny',
+                height: 500,
+                menubar: false,
+                plugins: [
+                    'advlist autolink lists link image charmap print preview anchor',
+                    'searchreplace visualblocks code fullscreen',
+                    'insertdatetime media table paste code help wordcount'
+                ],
+                toolbar: 'undo redo | formatselect | ' +
+                    'bold italic backcolor | alignleft aligncenter ' +
+                    'alignright alignjustify | bullist numlist outdent indent | ' +
+                    'removeformat | help',
+                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+            });
+
+            function validateInput() {
+                if (document.getElementById("uploadBox").value == "") {
+                    Swal.fire(
+                        'Ошибка!',
+                        'Загрузите Картинку',
+                        'ошибка'
+                    )
+                    return false;
+                }
+                return true;
+            }
+            $(".js-example-placeholder-multiple").select2({
+                placeholder: "Выбирите элементы списка"
+            });
+        </script>
+        <script>
+
+            var exampleModal = document.getElementById('exampleModal')
+            exampleModal.addEventListener('show.bs.modal', function (event) {
+                // Button that triggered the modal
+                var button = event.relatedTarget;
+                // Extract info from data-bs-* attributes
+                var humanId = button.getAttribute('data-HumanId');
+                var roleId = button.getAttribute('data-RoleId');
+                // If necessary, you could initiate an AJAX request here
+                // and then do the updating in a callback.
+                //
+                // Update the modal's content.
+                var modalHumanSelect = exampleModal.querySelector('.modal-body select[name=IdHuman]');
+                var modalRoleSelect = exampleModal.querySelector('.modal-body select[name=IdRole]');
+                var modalHumanInput = exampleModal.querySelector('.modal-body input[name=IdHumanD]');
+                var modalRoleInput = exampleModal.querySelector('.modal-body input[name=IdRoleD]');
+
+                modalHumanSelect.value = humanId;
+                modalRoleSelect.value = roleId;
+                modalHumanInput.value = humanId;
+                modalRoleInput.value = roleId;
+            })
+            var deleteActor = document.getElementById('deleteActor')
+            deleteActor.addEventListener('show.bs.modal', function (event) {
+                // Button that triggered the modal
+                var button = event.relatedTarget;
+                // Extract info from data-bs-* attributes
+                var humanId = button.getAttribute('data-HumanId');
+                var roleId = button.getAttribute('data-RoleId');
+                // If necessary, you could initiate an AJAX request here
+                // and then do the updating in a callback.
+                //
+                // Update the modal's content.
+
+                var modalHumanInput = deleteActor.querySelector('.modal-body select[name=IdHuman]');
+                var modalRoleInput = deleteActor.querySelector('.modal-body select[name=IdRole]');
+
+                for (var i = 0; i < modalHumanInput.options.length; i++) {
+                    var option;
+                    option = modalHumanInput.options[i];
+                    if (option.value == humanId) {
+                        console.log(humanId);
+                        option.setAttribute('selected', true);
+                        $('#toSelect').find(':not(:selected)').prop('disabled', true);
+                    }
+                }
+                for (var i = 0; i < modalRoleInput.options.length; i++) {
+                    var option;
+                    option = modalRoleInput.options[i];
+                    if (option.value == roleId) {
+                        console.log(roleId);
+                        option.setAttribute('selected', true);
+                        $('#toSelect2').find(':not(:selected)').prop('disabled', true);
+                    }
+                }
+
+                modalHumanInput.value = humanId;
+                modalRoleInput.value = roleId;
+            })
+            submitForms = function () {
+                document.forms["MoviePeopleDel"].submit();
+                document.forms["MoviePeople"].submit();
+            }
+
+            
+        </script>
+
+    }

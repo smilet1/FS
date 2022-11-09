@@ -1,0 +1,98 @@
+﻿@model FS.Models.Movie
+
+<form method="post" >
+
+    <input asp-for="Id" hidden />
+    <div class="border p-3">
+        <div class="form-group row">
+            <h2 class="text-info pl-3">Удалить Фильм</h2>
+        </div>
+        <div class="row">
+            <div class="col-8">
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Title"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Title" disabled class="form-control" />
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Tagline"></label>
+                    </div>
+                    <div class="col-8">
+                        <input asp-for="Tagline" disabled class="form-control" />
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Release"></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="date" disabled asp-for="Release" class="form-control" />
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Duration"></label>
+                    </div>
+                    <div class="col-8">
+                        <input type="number"  asp-for="Duration" disabled class="form-control" />
+                    </div>
+
+                </div>
+                <div class="form-group row">
+                    <div class="col-4">
+                        <label asp-for="Description"></label>
+                    </div>
+                    <div class="col-8">
+                        @Html.Raw(Model.Description)
+                    </div>
+
+                </div>
+
+                <div class="form-group row">
+                    <div class="col-8 offset-4 row">
+
+                        <div class="col">
+                            <button type="submit" class="btn btn-danger w-100" >Удалить</button>
+
+
+                        </div>
+                        <div class="col">
+                            <a asp-action="Index" class="btn btn-success w-100"><i class="fas fa-sign-out-alt"></i> Вернуться</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-4 pt-4">
+                @* Keep this empty *@
+                @if (Model.Id != 0)
+                {
+                    <img src="@WC.ImagePath@Model.Img" width="100%" style="border-radius:5px; border:1px; solid:#bbb" />
+                }
+            </div>
+        </div>
+    </div>
+</form>
+
+@section Scripts{
+    @{
+        <partial name="_ValidationScriptsPartial" />
+    }
+    <script>
+        $(document).ready(function () {
+            //$('.summernote').summernote({
+            //    height: 250,
+            //    disable:false
+            //});
+            $('#summernote').summernote('disable');
+        });
+        
+    </script>
+
+}

@@ -1,0 +1,75 @@
+﻿@model FS.Models.ViewModels.HomeVM
+
+    <div>
+        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+            <div class="col-1"></div>
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Жанры
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @if (Model.Genres.Count() != 0)
+                        {
+                            @foreach (var obj in Model.Genres)
+                            {
+                                <form action="/" method="get">
+                                    <input name="GenreId" value="@obj.Id" hidden />
+                                    <button asp-action="Index" class="btn btn-link nav-link text-dark">@obj.Name</button>
+                                </form>
+                            }
+                        }
+                    </div>
+                </li>
+                <li class="nav-item dropdown">
+
+                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Подборки
+                    </a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                        @if (Model.Compilations.Count() != 0)
+                        {
+                            @foreach (var obj in Model.Compilations)
+                            {
+                                <form action="/" method="get">
+                                    <input name="CompilationId" value="@obj.Id" hidden />
+                                    <button asp-action="Index" class="btn btn-link nav-link text-dark">@obj.Name</button>
+                                </form>
+                            }
+                        }
+                    </div>
+                </li>
+            </ul>
+            <div class="container">
+                <div>
+                </div>
+                <form class="d-flex" method="get" asp-controller="Home" asp-action="Index">
+                    <input class="form-control me-2" type="text" name="search" placeholder="Поиск" aria-label="Поиск" />
+                    <input class="btn btn-outline-dark" type="submit" value="Поиск" />
+                </form>
+            </div>
+        </nav>
+    </div>
+<div class="container">
+    @*<div>
+        <button class="btn btn-dark filter-button" data-filter="all">All</button>
+        @if (Model != null)
+        {
+            @foreach (var obj in Model.Movies)
+            {
+                <button class="btn btn-outline-secondary filter-button" data-filter="@obj.Title.Replace(' ', '_')">@obj.Title</button>
+            }
+        }
+    </div>*@
+    <br />
+    <div class="row">
+        @if (Model != null)
+        {
+            @foreach (var movie in Model.Movies)
+            {
+                <partial name="_IndividualMovieCard" model="movie" />
+            }
+        }
+    </div>
+</div>
